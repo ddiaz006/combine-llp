@@ -39,15 +39,16 @@ def buildcards(odir, v1n, v2n, options):
             create_cards = "python create_datacard.py --inputfile=%s --carddir=%s --nbins=%i --nMCTF=%i --passBinName=%s --blinded" % (ifile, odir, options.n, v1n, options.passBinName)
         else:
             create_cards = "python create_datacard.py --inputfile=%s --carddir=%s --nbins=%i --nDataTF=%i --passBinName=%s --blinded" % (ifile, odir, options.n, v1n, options.passBinName)
-        combineCards = "cd %s/HHModel; combineCards.py pass=pass%s.txt fail=fail.txt > HHModel_combined.txt; text2workspace.py HHModel_combined.txt ;cd -" % (odir, options.passBinName)
+        combineCards = "cd %s/VLLModel; combineCards.py pass=pass%s.txt fail=fail.txt > VLLModel_combined.txt; text2workspace.py VLLModel_combined.txt ;cd -" % (odir, options.passBinName)
     else:
         if options.testMCTF:
             create_cards = "python create_datacard.py --inputfile=%s --carddir=%s --nbins=%i --nMCTF=%i --passBinName=%s" % (ifile, odir, options.n, v1n, options.passBinName)
         else:
             create_cards = "python create_datacard.py --inputfile=%s --carddir=%s --nbins=%i --nDataTF=%i --passBinName=%s" % (ifile, odir, options.n, v1n, options.passBinName)
-        combineCards = "cd %s/HHModel; combineCards.py pass=SR%s.txt fail=fitfail.txt > HHModel_combined.txt; text2workspace.py HHModel_combined.txt ;cd -" % (odir, options.passBinName)
-    wsRoot = "%s/HHModel_combined_n%i.root" % (odir, v1n)
-    cpCards = "cp %s/HHModel/HHModel_combined.root %s" % (odir, wsRoot)
+            print create_cards
+        combineCards = "cd %s/VLLModel; combineCards.py pass=SR%s.txt fail=fitfail.txt > VLLModel_combined.txt; text2workspace.py VLLModel_combined.txt ;cd -" % (odir, options.passBinName)
+    wsRoot = "%s/VLLModel_combined_n%i.root" % (odir, v1n)
+    cpCards = "cp %s/VLLModel/VLLModel_combined.root %s" % (odir, wsRoot)
 
     cmds = [
         create_cards,
@@ -72,14 +73,13 @@ if __name__ == "__main__":
     parser.add_option('--scale', dest='scale', default=1, type='float', help='scale factor to scale MC (assuming only using a fraction of the data)')
     parser.add_option('-l', '--lumi', action='store', type='float', dest='lumi', default=138.0, help='lumi')
     parser.add_option('-i', '--ifile', dest='ifile', default='HHTo4BPlots_Run2_BDTv8p2.root', help='file with histogram inputs', metavar='ifile')
-    parser.add_option('--ifile-loose', dest='ifile_loose', default=None, help='second file with histogram inputs (looser b-tag cut to take W/Z/H templates)',
-                      metavar='ifile_loose')
+    parser.add_option('--ifile-loose', dest='ifile_loose', default=None, help='second file with histogram inputs (looser b-tag cut to take W/Z/H templates)', metavar='ifile_loose')
     parser.add_option('--suffix', dest='suffix', default=None, help='suffix for conflict variables', metavar='suffix')
     parser.add_option('--ifile-muon', dest='ifile_muon', default=None, help='path to muonCR templates ', metavar='ifile_muon')
     parser.add_option('-t', '--toys', action='store', type='int', dest='toys', default=1000, help='number of toys')
     parser.add_option('-s', '--seed', action='store', type='int', dest='seed', default=1, help='random seed')
     parser.add_option('-r', '--r', dest='r', default=1, type='float', help='default value of r')
-    parser.add_option('-n', '--n', action='store', type='int', dest='n', default=17, help='number of bins')
+    parser.add_option('-n', '--n', action='store', type='int', dest='n', default=10, help='number of bins')
     parser.add_option('--just-plot', action='store_true', dest='justPlot', default=False, help='just plot')
     parser.add_option('--test-mc-tf', action='store_true', dest='testMCTF', default=False, help='do FTest on MC TF (default is on data TF)')
     parser.add_option('--pseudo', action='store_true', dest='pseudo', default=False, help='run on asimov dataset')
@@ -89,8 +89,7 @@ if __name__ == "__main__":
     parser.add_option('--exp', action='store_true', dest='exp', default=False, help='use exp(bernstein poly) transfer function', metavar='exp')
     parser.add_option('--freezeNuisances', action='store', type='string', dest='freezeNuisances', default='None', help='freeze nuisances')
     parser.add_option('--setParameters', action='store', type='string', dest='setParameters', default='None', help='setParameters')
-    parser.add_option('--dry-run', dest="dryRun", default=False, action='store_true',
-                      help="Just print out commands to run")
+    parser.add_option('--dry-run', dest="dryRun", default=False, action='store_true',  help="Just print out commands to run")
     parser.add_option('-o', '--odir', dest='odir', default='FTest', help='directory to write plots', metavar='odir')
     parser.add_option('--passBinName', default='Bin1', choices=['Bin1', 'Bin2', 'Bin3'], dest='passBinName', help='pass bin name')
     parser.add_option('--blinded', default=False, dest='blinded', help='run with data on SR')

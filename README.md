@@ -1,4 +1,4 @@
-# combine-hh
+# combine-llp
 
 ## CMSSW+Combine Quickstart
 ```bash
@@ -23,82 +23,31 @@ pip install --user --upgrade numpy
 pip install --user https://github.com/jmduarte/rhalphalib/archive/coefsq_rebase.zip
 pip install --user --upgrade uproot # use uproot4
 ```
-
-Get the HH model
-```bash
-wget https://gitlab.cern.ch/hh/tools/inference/-/raw/master/dhi/models/hh_model.py -O $CMSSW_BASE/src/HiggsAnalysis/CombinedLimit/python/hh_model.py
-```
-
 For reference, consult
  - https://cms-analysis.github.io/HiggsAnalysis-CombinedLimit/
  - https://cms-analysis.github.io/CombineHarvester/
 
-## Get input file
-
-The latest input file for the datacard can be found here: 
-
-```bash
-/storage/af/user/nlu/hh/looper_output/datacard_hist/
-```
-
-and latest VBF card: https://gitlab.cern.ch/hh/results/datacards_run2/-/blob/master/bbbb_boosted_vbf/v2/datacard.txt
-
 ## Checkout this repo and create datacards:
 ```bash
-git clone https://github.com/LPC-HH/combine-hh
-cd combine-hh/
-./make_cards.sh v8p2yield_AN_sr_sys_0830_fix2017trigSF0913 v1 /storage/af/user/nlu/hh/looper_output/datacard_hist/ True
+git clone https://github.com/danielguerrero/combine-llp
+cd combine-llp/
 ```
-Here the first argument should match the input histogram file name. 
 
-e.g. here this histogram is used for the preapproval result: 
+## Get input example files (histos_cscmodel_ootime.root,histos_dtmodel_ootime.root)
+They can be found here at the LPC: /uscms/home/guerrero/nobackup/Run2/VLLAnalysis/CMSSW_10_2_13/src/combine-llp/
+
+
+## Run F-test, 1st vs 2nd order. Make sure the binning is compatible with input histograms in runFtest.py
+For CSC,
 ```bash
-/storage/af/user/nlu/hh/looper_output/datacard_hist/HHTo4BPlots_Run2_BDTv8p2yield_AN_sr_sys_0830_fix2017trigSF0913.root
+python runFtest.py -n 7  --v1n1=0 --v1n2=1 --toys=1000 -s 1 --ifile histos_cscmodel_ootime.root
 ```
-
-The second argument `v1` is a version number in case we want to try different versions using the same input file with different systematic uncertainties etc.
-
-The third argument is the input directory containing the ROOT file with template histograms.
-
-The fourth argument is blinded (True) or not (False)
-
-Command to run unblinded result:
-```
-./make_cards.sh v8p2yield_AN_sr_sys_1111 v1 /storage/af/user/idutta/HH/CMSSW_9_4_2/src/V2/HHLooper/hists/result1111/ False
-./make_cards.sh v8p2yield_AN_sr_sys_1123 v1 /storage/af/user/nlu/hh/looper_output/datacard_hist False
-```
-## Run F-test (1st vs 2nd order):
-For Bin1,
+For DT,
 ```bash
-python runFtest.py --v1n1=0 --v1n2=1 -t 1000 -s 1 --passBinName Bin1 -i /storage/af/user/nlu/hh/looper_output/datacard_hist/HHTo4BPlots_Run2_BDTv8p2yield_AN_sr_sys_1123.root --blinded 0
+python runFtest.py -n 7  --v1n1=0 --v1n2=1 --toys=1000 -s 1 --ifile histos_dtmodel_ootime.root
 ```
 
-## produce ttbar CR plot figure 27 in ANv4
-
+## Check fit performance in 1st order model:
 ```bash
-python create_datacard_TTCR.py --inputfile /storage/af/user/nlu/work/HH/CMSSW_9_4_2/src/HHLooper_sysTest/python/HHTo4BPlots_Run2_ttbarSkim_BDTv8p2.root
-cd cards_shapes_TTBarCR/HHModel
-source build.sh 
-combine -M FitDiagnostics model_combined.root --setParameters r=1 --rMin 0 --rMax 2 --skipBOnlyFit --saveNormalizations --saveShapes --saveWithUncertainties --saveOverallShapes -n SBfitonly --ignoreCovWarning
+combine -M FitDiagnostics FTest/cards_n1i0/VLLModel/VLLModel_combined.root --saveShapes --saveWithUncertainties --rMin -20 --rMax 20
 ```
-the output is `fitDiagnosticsSBfitonly.root`, which will be the input of `makePostFitPlot_TTCR.py` in the `HHLooper` directory
-
-## Kl and mu scan
-
-Go to Coupling directory
- 
-## Systematic uncertainty ranking and impact
-
-Go to SystImpact directory
-
-## Higgs boson self-coupling (kl) and signal strength scan 
-
-Go to Coupling directory
-
-## Upper limit as a function of kl
-
-Go to xsUpperLimit directory
-
-Script not done yet
-
-

@@ -89,7 +89,7 @@ def plotgaus(iFName, injet, iLabel, options):
     lat.DrawLatex(0.12, 0.91, "CMS")
     lat.SetTextSize(0.05)
     lat.SetTextFont(52)
-    lat.DrawLatex(0.23, 0.91, "Preliminary")
+    lat.DrawLatex(0.23, 0.91, "Work in progress")
     lat.SetTextFont(42)
     lat.DrawLatex(0.70, 0.91, "%.1f fb^{-1} (13 TeV)" % options.lumi)
     lat.SetTextFont(52)
@@ -113,8 +113,8 @@ def plotftest(iToys, iCentral, prob, iLabel, options):
     lCan.SetTopMargin(0.1)
 
     if options.method == 'FTest':
-        lH = r.TH1F(iLabel+"hist", iLabel+"hist", 100, 0, min(max(max(iToys), iCentral)*1.1, 10.0))
-        lH_cut = r.TH1F(iLabel+"hist", iLabel+"hist", 100, 0, min(max(max(iToys), iCentral)*1.1, 10.0))
+        lH = r.TH1F(iLabel+"hist", iLabel+"hist", 100, 0, min(max(max(iToys), iCentral)*1.1, 12.0))
+        lH_cut = r.TH1F(iLabel+"hist", iLabel+"hist", 100, 0, min(max(max(iToys), iCentral)*1.1, 12.0))
     elif options.method == 'GoodnessOfFit' and options.algo == 'saturated':
         lH = r.TH1F(iLabel+"hist", iLabel+"hist", 100, 0, max(max(iToys), iCentral)*1.1)
         lH_cut = r.TH1F(iLabel+"hist", iLabel+"hist", 100, 0, max(max(iToys), iCentral)*1.1)
@@ -189,7 +189,7 @@ def plotftest(iToys, iCentral, prob, iLabel, options):
     lat.SetTextSize(0.05)
     lat.SetTextFont(52)
     if options.isData:
-        lat.DrawLatex(0.23, 0.91, "Preliminary")
+        lat.DrawLatex(0.23, 0.91, "Work in progress")
     else:
         lat.DrawLatex(0.23, 0.91, "Simulation")
     lat.SetTextFont(42)
