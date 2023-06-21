@@ -39,16 +39,16 @@ def buildcards(odir, v1n, v2n, options):
             create_cards = "python create_datacard.py --inputfile=%s --carddir=%s --nbins=%i --nMCTF=%i --passBinName=%s --blinded" % (ifile, odir, options.n, v1n, options.passBinName)
         else:
             create_cards = "python create_datacard.py --inputfile=%s --carddir=%s --nbins=%i --nDataTF=%i --passBinName=%s --blinded" % (ifile, odir, options.n, v1n, options.passBinName)
-        combineCards = "cd %s/VLLModel; combineCards.py pass=pass%s.txt fail=fail.txt > VLLModel_combined.txt; text2workspace.py VLLModel_combined.txt ;cd -" % (odir, options.passBinName)
+        combineCards = "cd %s/BPModel; combineCards.py pass=pass%s.txt fail=fail.txt > BPModel_combined.txt; text2workspace.py BPModel_combined.txt ;cd -" % (odir, options.passBinName)
     else:
         if options.testMCTF:
             create_cards = "python create_datacard.py --inputfile=%s --carddir=%s --nbins=%i --nMCTF=%i --passBinName=%s" % (ifile, odir, options.n, v1n, options.passBinName)
         else:
             create_cards = "python create_datacard.py --inputfile=%s --carddir=%s --nbins=%i --nDataTF=%i --passBinName=%s" % (ifile, odir, options.n, v1n, options.passBinName)
             print create_cards
-        combineCards = "cd %s/VLLModel; combineCards.py pass=SR%s.txt fail=fitfail.txt > VLLModel_combined.txt; text2workspace.py VLLModel_combined.txt ;cd -" % (odir, options.passBinName)
-    wsRoot = "%s/VLLModel_combined_n%i.root" % (odir, v1n)
-    cpCards = "cp %s/VLLModel/VLLModel_combined.root %s" % (odir, wsRoot)
+        combineCards = "cd %s/BPModel; combineCards.py pass=SR%s.txt fail=fitfail.txt > BPModel_combined.txt; text2workspace.py BPModel_combined.txt ;cd -" % (odir, options.passBinName)
+    wsRoot = "%s/BPModel_combined_n%i.root" % (odir, v1n)
+    cpCards = "cp %s/BPModel/BPModel_combined.root %s" % (odir, wsRoot)
 
     cmds = [
         create_cards,
