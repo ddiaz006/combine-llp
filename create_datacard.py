@@ -47,7 +47,7 @@ def create_datacard(inputfile, carddir, nbins, nMCTF, nDataTF, passBinName, fail
     msdbins = np.arange(50, 300, 1) #np.array([50,56,62,68,74,88,115,190,200])
     msd = rl.Observable('nrechits', msdbins)
     msdpts = np.arange(50.5, 300.5, 1) #these are midpoints of each bin
-    msdscaled = (msdpts-50.5)/250.
+    msdscaled = (msdpts-50.5)/250.     #make range 0:1
 
 #    #DT OOT
 #    msdbins = np.array([50,56,62,68,74,84,98,114,120])
