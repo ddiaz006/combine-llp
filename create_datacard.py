@@ -44,10 +44,10 @@ def create_datacard(inputfile, carddir, nbins, nMCTF, nDataTF, passBinName, fail
 
     #rescaled axis to be compatible with Bernstein polymial
     #CSC OOT
-    msdbins = np.array([50,56,62,68,74,88,115,190,200])
+    msdbins = np.arange(50, 300, 1) #np.array([50,56,62,68,74,88,115,190,200])
     msd = rl.Observable('nrechits', msdbins)
-    msdpts = np.array([53,59,65,71,81,101.5,152.5,195])
-    msdscaled = (msdpts-50.)/150
+    msdpts = np.arange(50.5, 300.5, 1) #these are midpoints of each bin
+    msdscaled = (msdpts-50.5)/250.
 
 #    #DT OOT
 #    msdbins = np.array([50,56,62,68,74,84,98,114,120])
@@ -75,15 +75,15 @@ def create_datacard(inputfile, carddir, nbins, nMCTF, nDataTF, passBinName, fail
     print ("TF = pass/ fail = ",qcdeffpass)
 
     # transfer factor
-    tf_dataResidual        = rl.BernsteinPoly("CMS_vll_tf_dataResidual_"+passBinName, (nDataTF,), ['nrechits'], limits=(-40, 40))
+    tf_dataResidual        = rl.BernsteinPoly("CMS_bp_tf_dataResidual_"+passBinName, (nDataTF,), ['nrechits'], limits=(-40, 40))
     tf_dataResidual_params = tf_dataResidual(msdscaled)
     tf_params_pass         = qcdeffpass * tf_dataResidual_params
 
     # qcd params
-    qcdparams = np.array([rl.IndependentParameter('CMS_vll_param_msdbin%d' % i, 0) for i in range(msd.nbins)])
+    qcdparams = np.array([rl.IndependentParameter('CMS_bp_param_msdbin%d' % i, 0) for i in range(msd.nbins)])
 
     # build actual fit model now
-    model = rl.Model("VLLModel")
+    model = rl.Model("BPModel")
     for region in regions:
         logging.info('starting region: %s' % region)
         ch = rl.Channel(region)
@@ -106,7 +106,7 @@ def create_datacard(inputfile, carddir, nbins, nMCTF, nDataTF, passBinName, fail
         templateNames = OrderedDict([
             ('bkg' , 'h_%s_Data'%tagname),
             ('data', 'h_%s_Data'%tagname),
-            ('vll_300', 'h_%s_VLL300_ctau100'%tagname),
+            #('vll_300', 'h_%s_VLL300_ctau100'%tagname),
         ])
 
         templates = {}
@@ -122,7 +122,7 @@ def create_datacard(inputfile, carddir, nbins, nMCTF, nDataTF, passBinName, fail
             # don't allow them to go negative
             valuesNominal = np.maximum(templ[0], 0.)
             templ = (valuesNominal, templ[1], templ[2], templ[3])
-            stype = rl.Sample.SIGNAL if 'vll' in sName else rl.Sample.BACKGROUND
+            stype = rl.Sample.SIGNAL if 'sig' in sName else rl.Sample.BACKGROUND
             sample = rl.TemplateSample(ch.name + '_' + sName, stype, templ)
             sample.setParamEffect(lumi_13TeV_161718, 1.016)
             ch.addSample(sample)
@@ -149,11 +149,11 @@ def create_datacard(inputfile, carddir, nbins, nMCTF, nDataTF, passBinName, fail
         pass_qcd = rl.TransferFactorSample(passChName+'_datadriven', rl.Sample.BACKGROUND, tf_params_pass, fail_qcd)
         passCh.addSample(pass_qcd)
 
-    with open(os.path.join(str(carddir), 'VLLModel.pkl'), "wb") as fout:
+    with open(os.path.join(str(carddir), 'BPModel.pkl'), "wb") as fout:
         pickle.dump(model, fout, 2)  # use python 2 compatible protocol
 
     logging.info('rendering combine model')
-    model.renderCombine(os.path.join(str(carddir), 'VLLModel'))
+    model.renderCombine(os.path.join(str(carddir), 'BPModel'))
 
 
 if __name__ == '__main__':
