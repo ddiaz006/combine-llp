@@ -146,7 +146,7 @@ def create_datacard(inputfile, carddir, nbins, nMCTF, nDataTF, passBinName, fail
         # more direct formula when data in pass is small
         scaledparams_smallN = initial_qcd_fail * qcdparams
         
-        data_pass = passCh.getObservation.astype(float)
+        data_pass = passCh.getObservation().astype(float)
         switchN = 3
         scaledparams = np.copy(scaledparams_largeN)
         scaledparams[data_pass < switchN] = scaledparams_smallN[data_pass < switchN]
