@@ -44,10 +44,10 @@ def create_datacard(inputfile, carddir, nbins, nMCTF, nDataTF, passBinName, fail
 
     #rescaled axis to be compatible with Bernstein polymial
     #CSC OOT
-    msdbins = np.arange(50, 300, 1) #np.array([50,56,62,68,74,88,115,190,200])
+    msdbins = np.linspace(50, 300, 6) #np.linspace(binLow, binHigh, Nbins+1) #np.arange(50, 300, 1) #np.array([50,56,62,68,74,88,115,190,200])
     msd = rl.Observable('nrechits', msdbins)
-    msdpts = np.arange(50.5, 300.5, 1) #these are midpoints of each bin
-    msdscaled = (msdpts-50.5)/250.     #make range 0:1
+    msdpts = msdbins[:-1] + 0.5 * np.diff(msdbins) #np.arange(50.5, 299.5, 1) #these are midpoints of each bin
+    msdscaled = (msdpts-50)/250.     #make range 0:1
 
 #    #DT OOT
 #    msdbins = np.array([50,56,62,68,74,84,98,114,120])
@@ -106,7 +106,7 @@ def create_datacard(inputfile, carddir, nbins, nMCTF, nDataTF, passBinName, fail
         templateNames = OrderedDict([
             ('bkg' , 'h_%s_Data'%tagname),
             ('data', 'h_%s_Data'%tagname),
-            #('vll_300', 'h_%s_VLL300_ctau100'%tagname),
+            ('Sig_M0p3_ctau300', 'h_%s_Sig_M0p3_ctau300'%tagname),
         ])
 
         templates = {}
@@ -114,15 +114,16 @@ def create_datacard(inputfile, carddir, nbins, nMCTF, nDataTF, passBinName, fail
             templates[temp] = get_hist(upfile, templateNames[temp], obs=msd)
 
         sNames = [proc for proc in templates.keys() if proc not in ['bkg', 'data']]
-
+        
         for sName in sNames:
+            print(sName)
             logging.info('get templates for: %s' % sName)
             # get templates
             templ = templates[sName]
             # don't allow them to go negative
             valuesNominal = np.maximum(templ[0], 0.)
             templ = (valuesNominal, templ[1], templ[2], templ[3])
-            stype = rl.Sample.SIGNAL if 'sig' in sName else rl.Sample.BACKGROUND
+            stype = rl.Sample.SIGNAL if 'Sig' in sName else rl.Sample.BACKGROUND
             sample = rl.TemplateSample(ch.name + '_' + sName, stype, templ)
             sample.setParamEffect(lumi_13TeV_161718, 1.016)
             ch.addSample(sample)
