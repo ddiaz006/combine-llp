@@ -139,9 +139,18 @@ def create_datacard(inputfile, carddir, nbins, nMCTF, nDataTF, passBinName, fail
         passCh = model[passChName]
 
         # sideband fail
-        initial_qcd = failCh.getObservation().astype(float)  # was integer, and numpy complained about subtracting float from it
+        initial_qcd_fail = failCh.getObservation().astype(float)  # was integer, and numpy complained about subtracting float from it
         sigmascale = 10  # to scale the deviation from initial
-        scaledparams = initial_qcd * (1 + sigmascale/np.maximum(1., np.sqrt(initial_qcd)))**qcdparams
+        
+        # more complex formula when data in pass is large
+        scaledparams_largeN = initial_qcd_fail * (1 + sigmascale/np.maximum(1., np.sqrt(initial_qcd_fail)))**qcdparams
+        # more direct formula when data in pass is small
+        scaledparams_smallN = initial_qcd_fail * qcdparams
+        
+        data_pass = passCh.getObservation().astype(float)
+        switchN = 3
+        scaledparams = np.copy(scaledparams_largeN)
+        scaledparams[data_pass < switchN] = scaledparams_smallN[data_pass < switchN]
 
         # add samples
         fail_qcd = rl.ParametericSample(failChName+'_datadriven', rl.Sample.BACKGROUND, msd, scaledparams)
