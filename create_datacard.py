@@ -13,6 +13,7 @@ rl.ParametericSample.PreferRooParametricHist = False
 logging.basicConfig(level=logging.DEBUG)
 adjust_posdef_yields = False
 
+#print(rl.__file__)
 
 def get_hist(upfile, name, obs):
     hist_values = upfile[name].values()
@@ -44,9 +45,13 @@ def create_datacard(inputfile, carddir, nbins, nMCTF, nDataTF, passBinName, fail
 
     #rescaled axis to be compatible with Bernstein polymial
     #CSC OOT
-    msdbins = np.linspace(50, 300, 6) #np.linspace(binLow, binHigh, Nbins+1) #np.arange(50, 300, 1) #np.array([50,56,62,68,74,88,115,190,200])
+    #msdbins = np.linspace(50, 300, 26) #np.linspace(binLow, binHigh, Nbins+1) #np.arange(50, 300, 1) #np.array([50,56,62,68,74,88,115,190,200])
+    msdbins = np.array([50,60,70,80,89,100,110,120,130,140,150,160,170,180,190,200,225,260,300])
+    #msdbins = np.array([130,140,150,160,170,180,190,200,225,260,300])
     msd = rl.Observable('nrechits', msdbins)
-    msdpts = msdbins[:-1] + 0.5 * np.diff(msdbins) #np.arange(50.5, 299.5, 1) #these are midpoints of each bin
+    #msdpts = msdbins[:-1] + 0.5 * np.diff(msdbins) #these are midpoints of each bin
+    msdpts = np.array([55,65,75,84.5,94.5,105,115,125,135,145,155,165,175,185,195,212.5,242.5,280])
+    #msdpts = np.array([135,145,155,165,175,185,195,212.5,242.5,280])
     msdscaled = (msdpts-50)/250.     #make range 0:1
 
 #    #DT OOT
@@ -145,13 +150,20 @@ def create_datacard(inputfile, carddir, nbins, nMCTF, nDataTF, passBinName, fail
         # more complex formula when data in pass is large
         scaledparams_largeN = initial_qcd_fail * (1 + sigmascale/np.maximum(1., np.sqrt(initial_qcd_fail)))**qcdparams
         # more direct formula when data in pass is small
-        scaledparams_smallN = initial_qcd_fail * qcdparams
+        scaledparams_smallN = initial_qcd_fail * (1 + qcdparams)
         
-        data_pass = passCh.getObservation.astype(float)
+        data_pass = passCh.getObservation().astype(float)
         switchN = 3
-        scaledparams = np.copy(scaledparams_largeN)
-        scaledparams[data_pass < switchN] = scaledparams_smallN[data_pass < switchN]
+        #scaledparams = np.copy(scaledparams_largeN)
+        #scaledparams[data_pass < switchN] = scaledparams_smallN[data_pass < switchN]
+        scaledparams = scaledparams_largeN
+        ####scaledparams[data_pass < switchN] = scaledparams_smallN[data_pass < switchN]
 
+        #print("scaledparams_largeN= ",scaledparams_largeN)
+        #print("scaledparams_smallN= ",scaledparams_smallN)
+        #print("initial_qcd_fail= ", initial_qcd_fail)
+        #print("data_pass= ",data_pass)
+        #print("qcdparams= ",qcdparams)
         # add samples
         fail_qcd = rl.ParametericSample(failChName+'_datadriven', rl.Sample.BACKGROUND, msd, scaledparams)
         failCh.addSample(fail_qcd)
