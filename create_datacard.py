@@ -111,7 +111,19 @@ def create_datacard(inputfile, carddir, nbins, nMCTF, nDataTF, passBinName, fail
         templateNames = OrderedDict([
             ('bkg' , 'h_%s_Data'%tagname),
             ('data', 'h_%s_Data'%tagname),
-            ('Sig_M0p3_ctau300', 'h_%s_Sig_M0p3_ctau300'%tagname),
+            ('Sig_M0p3_ctau300' , 'h_%s_Sig_M0p3_ctau300'%tagname),
+            #('Sig_M0p3_ctau1'   , 'h_%s_Sig_M0p3_ctau1'%tagname),
+            #('Sig_M0p3_ctau5'   , 'h_%s_Sig_M0p3_ctau5'%tagname),
+            #('Sig_M0p3_ctau7'   , 'h_%s_Sig_M0p3_ctau7'%tagname),
+            #('Sig_M0p3_ctau10'  , 'h_%s_Sig_M0p3_ctau10'%tagname),
+            #('Sig_M0p3_ctau30'  , 'h_%s_Sig_M0p3_ctau30'%tagname),
+            #('Sig_M0p3_ctau50'  , 'h_%s_Sig_M0p3_ctau50'%tagname),
+            #('Sig_M0p3_ctau70'  , 'h_%s_Sig_M0p3_ctau70'%tagname),
+            #('Sig_M0p3_ctau100' , 'h_%s_Sig_M0p3_ctau100'%tagname),
+            #('Sig_M0p3_ctau300' , 'h_%s_Sig_M0p3_ctau300'%tagname),
+            #('Sig_M0p3_ctau500' , 'h_%s_Sig_M0p3_ctau500'%tagname),
+            #('Sig_M0p3_ctau700' , 'h_%s_Sig_M0p3_ctau700'%tagname),
+            #('Sig_M0p3_ctau1000', 'h_%s_Sig_M0p3_ctau1000'%tagname),
         ])
 
         templates = {}
