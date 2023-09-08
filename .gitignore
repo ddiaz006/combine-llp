@@ -6,4 +6,5 @@ fitDiagnostics*.root
 HHModel*
 *.png
 *.root
+**/.ipynb_checkpoints/
 
